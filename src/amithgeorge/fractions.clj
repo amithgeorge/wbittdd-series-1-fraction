@@ -16,8 +16,9 @@
   (= 2 (gcd -2 -4))
   (= 4 (gcd 4 -4)))
 
-(defn- lcm [dx dy]
-  (/ (Math/abs (* dx dy)) (gcd dx dy)))
+(defn- lcm
+  [a b]
+  (/ (Math/abs (* a b)) (gcd a b)))
 
 (comment
   (= 4 (lcm 2 4))
@@ -27,6 +28,8 @@
 
 (defn ->fraction
   [numerator denominator]
+  (when (zero? denominator)
+    (throw (IllegalArgumentException. "Denominator cannot be 0")))
   (let [[numerator' denominator'] (if (and (neg? numerator)
                                            (neg? denominator))
                                     [(- numerator) (- denominator)]
@@ -34,12 +37,16 @@
     {:numerator numerator'
      :denominator denominator'}))
 
-
 (comment
   (= {:numerator 3 :denominator 4} (->fraction 3 4))
   (= {:numerator 3 :denominator 4} (->fraction -3 -4))
   (= {:numerator -3 :denominator 4} (->fraction -3 4))
-  (= {:numerator 3 :denominator -4} (->fraction 3 -4)))
+  (= {:numerator 3 :denominator -4} (->fraction 3 -4))
+  (= :error (try
+              (->fraction 2 0)
+              (catch IllegalArgumentException e
+                (prn (ex-message e))
+                :error))))
 
 (defn- reduce-fraction [result]
   (let [result-gcf (gcd (:numerator result) (:denominator result))]
@@ -74,3 +81,6 @@
           (:numerator reduced-fraction)
           reduced-fraction))
       (+ x y))))
+
+(comment
+  (add 1 (->fraction 0 2)))
