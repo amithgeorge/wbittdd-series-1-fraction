@@ -92,17 +92,25 @@
   (->fraction (+ (:numerator x') (:numerator y'))
               (:denominator x')))
 
+(defn- fraction-like?
+  [x]
+  (cond
+    (int? x) true
+    (and (map? x)
+         (int? (:numerator x))
+         (and (int? (:denominator x))
+              (not (zero? (:denominator x))))) true
+    :else false))
+
 (defn add
   [x y]
+  {:pre [(fraction-like? x) (fraction-like? y)]}
   (let [x (if (int? x) (->fraction x 1) x)
         y (if (int? y) (->fraction y 1) y)]
-    (if (and (map? x)
-             (map? y))
-      (->> (->fractions-with-same-denominator x y)
-           (apply add-same-denominator-fractions)
-           reduce-fraction
-           simplify-fraction)
-      (+ x y))))
+    (->> (->fractions-with-same-denominator x y)
+         (apply add-same-denominator-fractions)
+         reduce-fraction
+         simplify-fraction)))
 
 (comment
   (add 1 (->fraction 0 2)))
