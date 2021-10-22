@@ -58,6 +58,19 @@
 (defn- fraction-is-whole? [reduced-fraction]
   (= 1 (Math/abs (:denominator reduced-fraction))))
 
+(defn- ->same-denominator
+  [x y]
+  (if (= (:denominator x) (:denominator y))
+    [x y]
+    (let [denominator-lcm (lcm (:denominator x) (:denominator y))
+          x-multiplier (/ denominator-lcm (:denominator x))
+          y-muliplier (/ denominator-lcm (:denominator y))
+          x' (->fraction (* x-multiplier (:numerator x))
+                         (* x-multiplier (:denominator x)))
+          y' (->fraction (* y-muliplier (:numerator y))
+                         (* y-muliplier (:denominator y)))]
+      [x' y'])))
+
 (defn add
   [x y]
   (let [x (if (int? x) (->fraction x 1) x)
@@ -67,13 +80,7 @@
       (let [result (if (= (:denominator x) (:denominator y))
                      (->fraction (+ (:numerator x) (:numerator y))
                                  (:denominator x))
-                     (let [denominator-lcm (lcm (:denominator x) (:denominator y))
-                           x-multiplier (/ denominator-lcm (:denominator x))
-                           y-muliplier (/ denominator-lcm (:denominator y))
-                           x' (->fraction (* x-multiplier (:numerator x))
-                                          (* x-multiplier (:denominator x)))
-                           y' (->fraction (* y-muliplier (:numerator y))
-                                          (* y-muliplier (:denominator y)))]
+                     (let [[x' y'] (->same-denominator x y)]
                        (->fraction (+ (:numerator x') (:numerator y'))
                                    (:denominator x'))))
             reduced-fraction (reduce-fraction result)]
