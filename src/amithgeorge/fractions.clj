@@ -63,7 +63,7 @@
 (defn- fraction-is-whole? [reduced-fraction]
   (= 1 (Math/abs (:denominator reduced-fraction))))
 
-(defn- ->same-denominator
+(defn- ->fractions-with-same-denominator
   [x y]
   (if (= (:denominator x) (:denominator y))
     [x y]
@@ -76,19 +76,32 @@
                          (* y-muliplier (:denominator y)))]
       [x' y'])))
 
+(comment
+  (= [(->fraction 1 5) (->fraction 3 5)]
+     (->fractions-with-same-denominator (->fraction 1 5) (->fraction 3 5)))
+
+  (= [(->fraction 5 15) (->fraction 9 15)]
+     (->fractions-with-same-denominator (->fraction 1 3) (->fraction 3 5))))
+
+(defn- simplify-fraction [reduced-fraction]
+  (if (fraction-is-whole? reduced-fraction)
+    (:numerator reduced-fraction)
+    reduced-fraction))
+
+(defn- add-same-denominator-fractions [x' y']
+  (->fraction (+ (:numerator x') (:numerator y'))
+              (:denominator x')))
+
 (defn add
   [x y]
   (let [x (if (int? x) (->fraction x 1) x)
         y (if (int? y) (->fraction y 1) y)]
     (if (and (map? x)
              (map? y))
-      (let [[x' y'] (->same-denominator x y)
-            result (->fraction (+ (:numerator x') (:numerator y'))
-                               (:denominator x'))
-            reduced-fraction (reduce-fraction result)]
-        (if (fraction-is-whole? reduced-fraction)
-          (:numerator reduced-fraction)
-          reduced-fraction))
+      (->> (->fractions-with-same-denominator x y)
+           (apply add-same-denominator-fractions)
+           reduce-fraction
+           simplify-fraction)
       (+ x y))))
 
 (comment
