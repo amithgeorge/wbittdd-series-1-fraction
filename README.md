@@ -5,7 +5,7 @@ This an exercise for Series 1 of the course [The World’s Best Intro to TDD: Le
 ## Dev Setup
 
 1. Install latest LTS release of [Java JDK](https://www.azul.com/downloads/?package=jdk).
-2. Install latest release of [Clojure tools](https://clojure.org/guides/getting_started).
+2. Install latest release of [Clojure tools](https://clojure.org/guides/getting_started#_clojure_installer_and_cli_tools).
 3. Install latest release of [Babashka](https://github.com/babashka/babashka#installation)
 
 ## Tests
