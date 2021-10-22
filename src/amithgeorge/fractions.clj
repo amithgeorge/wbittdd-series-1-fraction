@@ -48,8 +48,8 @@
       (->fraction (/ (:numerator result) result-gcf)
                   (/ (:denominator result) result-gcf)))))
 
-(defn fraction-is-whole? [reduced-fraction]
-  (= 1 (:denominator reduced-fraction)))
+(defn- fraction-is-whole? [reduced-fraction]
+  (= 1 (Math/abs (:denominator reduced-fraction))))
 
 (defn add
   [x y]
