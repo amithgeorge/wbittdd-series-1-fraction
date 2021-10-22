@@ -11,11 +11,19 @@
   [opts]
   (bb/run-tests opts))
 
+(defn uberjar
+  "Create the uberjar"
+  [opts]
+  (-> opts
+      (assoc :lib lib :version version :main main)
+      (bb/clean)
+      (bb/uber)))
+
 (defn ci
   "Run the CI pipeline of tests (and build the uberjar)."
   [opts]
   (-> opts
-      (assoc :lib lib :version version :main main)
+      ;; (assoc :lib lib :version version :main main)
       (bb/run-tests)
-      (bb/clean)
-      (bb/uber)))
+      uberjar))
+

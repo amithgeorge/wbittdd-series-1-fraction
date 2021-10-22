@@ -1,0 +1,4 @@
+{:tasks
+ {ci (shell "clojure -T:build ci")
+  uberjar (shell "clojure -T:build uberjar")
+  unit-tests (shell "bin/kaocha")}}
