@@ -55,6 +55,11 @@
       (->fraction (/ (:numerator result) result-gcf)
                   (/ (:denominator result) result-gcf)))))
 
+(comment
+  (= (->fraction 1 2) (reduce-fraction (->fraction 2 4)))
+  (= (->fraction -1 2) (reduce-fraction (->fraction -2 4)))
+  (= (->fraction 1 -2) (reduce-fraction (->fraction 2 -4))))
+
 (defn- fraction-is-whole? [reduced-fraction]
   (= 1 (Math/abs (:denominator reduced-fraction))))
 
@@ -77,12 +82,9 @@
         y (if (int? y) (->fraction y 1) y)]
     (if (and (map? x)
              (map? y))
-      (let [result (if (= (:denominator x) (:denominator y))
-                     (->fraction (+ (:numerator x) (:numerator y))
-                                 (:denominator x))
-                     (let [[x' y'] (->same-denominator x y)]
-                       (->fraction (+ (:numerator x') (:numerator y'))
-                                   (:denominator x'))))
+      (let [[x' y'] (->same-denominator x y)
+            result (->fraction (+ (:numerator x') (:numerator y'))
+                               (:denominator x'))
             reduced-fraction (reduce-fraction result)]
         (if (fraction-is-whole? reduced-fraction)
           (:numerator reduced-fraction)
