@@ -68,6 +68,15 @@
 
     (is (= (sut/->fraction 1 3)
            (sut/add (sut/->fraction -2 3)
-                    1)))))
+                    1))))
+
+  (testing "adding fractions with negative denominator"
+    (is (= (sut/->fraction -1 -2)
+           (sut/add (sut/->fraction 1 -4)
+                    (sut/->fraction -3 -4))))
+
+    (is (= 1
+           (sut/add (sut/->fraction 1 4)
+                    (sut/->fraction -3 -4))))))
 
 

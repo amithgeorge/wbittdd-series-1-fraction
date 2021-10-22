@@ -2,7 +2,9 @@
 
 (defn- gcd
   [a b]
-  (let [remainder (mod a b)]
+  (let [a (Math/abs a)
+        b (Math/abs b)
+        remainder (mod a b)]
     (if (pos? remainder)
       (recur b remainder)
       b)))
@@ -10,12 +12,34 @@
 (comment
   (= 3 (gcd 6 9))
   (= 3 (gcd 9 6))
-  (= 1 (gcd 7 5)))
+  (= 1 (gcd 7 5))
+  (= 2 (gcd -2 -4))
+  (= 4 (gcd 4 -4)))
+
+(defn- lcm [dx dy]
+  (/ (Math/abs (* dx dy)) (gcd dx dy)))
+
+(comment
+  (= 4 (lcm 2 4))
+  (= 18 (lcm 6 9))
+  (= 4 (lcm -4 4))
+  (= 6 (lcm -2 -3)))
 
 (defn ->fraction
   [numerator denominator]
-  {:numerator numerator
-   :denominator denominator})
+  (let [[numerator' denominator'] (if (and (neg? numerator)
+                                           (neg? denominator))
+                                    [(- numerator) (- denominator)]
+                                    [numerator denominator])]
+    {:numerator numerator'
+     :denominator denominator'}))
+
+
+(comment
+  (= {:numerator 3 :denominator 4} (->fraction 3 4))
+  (= {:numerator 3 :denominator 4} (->fraction -3 -4))
+  (= {:numerator -3 :denominator 4} (->fraction -3 4))
+  (= {:numerator 3 :denominator -4} (->fraction 3 -4)))
 
 (defn- reduce-fraction [result]
   (let [result-gcf (gcd (:numerator result) (:denominator result))]
@@ -36,9 +60,7 @@
       (let [result (if (= (:denominator x) (:denominator y))
                      (->fraction (+ (:numerator x) (:numerator y))
                                  (:denominator x))
-                     (let [denominator-lcm (/ (* (:denominator x)
-                                                 (:denominator y))
-                                              (gcd (:denominator x) (:denominator y)))
+                     (let [denominator-lcm (lcm (:denominator x) (:denominator y))
                            x-multiplier (/ denominator-lcm (:denominator x))
                            y-muliplier (/ denominator-lcm (:denominator y))
                            x' (->fraction (* x-multiplier (:numerator x))
