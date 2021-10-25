@@ -79,8 +79,16 @@
            (sut/add (sut/->fraction 1 4)
                     (sut/->fraction -3 -4))))
 
-    (testing "return whole number if denominator is -1"
-      (is (= 1 (sut/add (sut/->fraction 1 -4)
-                        (sut/->fraction 3 -4)))))))
+    (testing "return whole number if resultant denominator is -1"
+      (is (= -1 (sut/add (sut/->fraction 1 -4)
+                         (sut/->fraction 3 -4))))
+
+      (is (= -1 (sut/add 0 (sut/->fraction 1 -1))))
+
+      (is (= -1 (sut/add (sut/->fraction 0 -1)
+                         (sut/->fraction 1 -1))))
+
+      (is (= 3 (sut/add (sut/->fraction 3 -1)
+                        (sut/->fraction 6 1)))))))
 
 

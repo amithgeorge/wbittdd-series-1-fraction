@@ -85,7 +85,7 @@
 
 (defn- simplify-fraction [reduced-fraction]
   (if (fraction-is-whole? reduced-fraction)
-    (:numerator reduced-fraction)
+    (* (:denominator reduced-fraction) (:numerator reduced-fraction)) ;; ensure numerator has sign of denominator
     reduced-fraction))
 
 (defn- add-same-denominator-fractions [x' y']
